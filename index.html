@@ -767,7 +767,6 @@
         <script>
             AOS.init();
         </script>
-
         <script>
             document.addEventListener("DOMContentLoaded", function () {
                 const carousel = document.getElementById("benefitCarousel");
@@ -815,6 +814,11 @@
                         bootstrap.Carousel.getOrCreateInstance(carousel);
 
                     instance.to(0);
+
+
+                    if (typeof AOS !== "undefined") {
+                        AOS.refreshHard();
+                    }
                 }
 
                 carousel.dataset.mobile = "false";
@@ -822,6 +826,7 @@
                 mobileQuery.addEventListener("change", updateCarousel);
             });
         </script>
+
 
 </body>
 
