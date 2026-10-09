@@ -770,6 +770,98 @@
 
 
 
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const carousel = document.getElementById("benefitCarousel");
+
+    if (!carousel) return;
+
+    const inner = carousel.querySelector(".carousel-inner");
+    if (!inner) return;
+
+    // เก็บโครงสร้างต้นฉบับสำหรับหน้าจอคอมพิวเตอร์
+    const desktopHTML = inner.innerHTML;
+
+    const mobileQuery = window.matchMedia("(max-width: 767.98px)");
+
+    function updateCarousel() {
+        const isMobile = mobileQuery.matches;
+        const wasMobile = carousel.dataset.mobile === "true";
+
+        // ปรับเฉพาะเมื่อเปลี่ยนระหว่างมือถือกับคอมพิวเตอร์
+        if (isMobile === wasMobile) return;
+
+        if (isMobile) {
+            const temp = document.createElement("div");
+            temp.innerHTML = desktopHTML;
+
+            const cards = [];
+
+            // เลือกการ์ดจากแถวหลักของแต่ละสไลด์
+            temp.querySelectorAll(".carousel-item").forEach(function (slide) {
+                const row = slide.querySelector(":scope > .row");
+
+                if (!row) return;
+
+                row.querySelectorAll(":scope > div").forEach(function (card) {
+                    cards.push(card);
+                });
+            });
+
+            // สร้างสไลด์ใหม่ โดยให้หนึ่งสไลด์มีหนึ่งการ์ด
+            inner.innerHTML = "";
+
+            cards.forEach(function (card, index) {
+                const slide = document.createElement("div");
+                slide.classList.add("carousel-item");
+
+                if (index === 0) {
+                    slide.classList.add("active");
+                }
+
+                const row = document.createElement("div");
+                row.className = "row justify-content-center g-4";
+
+                const cardCopy = card.cloneNode(true);
+                cardCopy.className = "col-10";
+
+                row.appendChild(cardCopy);
+                slide.appendChild(row);
+                inner.appendChild(slide);
+            });
+
+            carousel.dataset.mobile = "true";
+
+        } else {
+            // กลับไปใช้โครงสร้างเดิมบนคอมพิวเตอร์
+            inner.innerHTML = desktopHTML;
+            carousel.dataset.mobile = "false";
+        }
+
+        // เริ่มต้นจากสไลด์แรก
+        const instance =
+            bootstrap.Carousel.getOrCreateInstance(carousel);
+
+        instance.to(0);
+
+        // แจ้ง AOS ให้ตรวจองค์ประกอบที่สร้างใหม่
+        if (window.AOS) {
+            AOS.refreshHard();
+        }
+    }
+
+    // กำหนดสถานะเริ่มต้นเพื่อให้ปรับตามขนาดหน้าจอครั้งแรก
+    carousel.dataset.mobile = mobileQuery.matches ? "true" : "false";
+
+    // บังคับให้สร้างรูปแบบที่ถูกต้องตั้งแต่เริ่มต้น
+    carousel.dataset.mobile = "initial";
+    updateCarousel();
+
+    mobileQuery.addEventListener("change", updateCarousel);
+});
+</script>
+
+
 
 
 
